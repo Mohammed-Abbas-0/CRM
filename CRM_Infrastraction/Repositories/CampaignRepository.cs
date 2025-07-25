@@ -309,7 +309,9 @@ namespace CRM_Infrastraction.Repositories
             {
                 Content = commentsDto.Content,
                 UserId = commentsDto.UserId,
-                CampaignId = commentsDto.CampaignId
+                CampaignId = commentsDto.CampaignId,
+                CreatedAt = DateTime.Now,
+                Rating = commentsDto.Rating
             };
             _db.CampaignComments.Add(comment);
             return await Save();
@@ -321,7 +323,7 @@ namespace CRM_Infrastraction.Repositories
 
         public async Task<List<CampaignCommentRecord>> GetCampaignCommentsAsync(int campaignId)
         {
-            var campaignComments = await _db.CampaignComments.AsNoTracking().Where(idx => idx.CampaignId == campaignId).ToListAsync();
+            var campaignComments = await _db.CampaignComments.AsNoTracking().Where(idx => idx.CampaignId == campaignId).OrderByDescending(idx => idx.Id).ToListAsync();
             if (!campaignComments.Any())
                 return new List<CampaignCommentRecord>();
 
@@ -333,7 +335,9 @@ namespace CRM_Infrastraction.Repositories
                 (
                     Content: comment.Content,
                     UserId: comment.UserId,
-                    UserName: userName??""
+                    UserName: userName??"",
+                    CreatedAt: comment.CreatedAt.ToString("yyyy-MM-dd hh:mm"),
+                    Rating: comment.Rating
                 );
                 campaignCommentRecords.Add(campaignCommentRecord);
             }

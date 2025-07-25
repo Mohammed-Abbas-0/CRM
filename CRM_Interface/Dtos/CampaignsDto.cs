@@ -9,7 +9,7 @@ namespace CRM_Interface.Dtos
     public class CampaignsDto
     {
         public int? PageSize { get; set; } = 1;
-        public int? PageCount { get; set; } = 20;
+        public int? PageCount { get; set; } = 50;
         public string? UserId { get; set; }
     }
     

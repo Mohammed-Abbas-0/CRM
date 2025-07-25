@@ -1,9 +1,4 @@
 ﻿using CRM_Interface.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CRM_Interface.IRepositories
 {
@@ -18,6 +13,8 @@ namespace CRM_Interface.IRepositories
         Task<ResponseMessage> UnRegisterCampaignAsync(UnRegisterCampaignDto registerCampaignDto);
         Task<int> GetCampaignsLikesAsync(int campaignId);
         Task<List<CampaignDto>> SearchCampaignAsync(string searchKeyWord);
+        Task<List<CampaignCommentRecord>> GetCampaignCommentsAsync(int campaignId);
+        Task<bool> AddCommentAsync(CampaignCommentDto commentsDto);
         Task<bool> Save();
 
     }

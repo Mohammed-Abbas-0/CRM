@@ -13,6 +13,7 @@ namespace CRM_Infrastraction.Persistence
         public DbSet<CampaignInteraction> CampaignInteractions => Set<CampaignInteraction>();
         public DbSet<Interaction> Interactions => Set<Interaction>();
         public DbSet<CampaignRegistration> CampaignRegistrations => Set<CampaignRegistration>();
+        public DbSet<CampaignComment> CampaignComments => Set<CampaignComment>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -18,6 +18,7 @@ namespace CRM_Application.Commands.Handler
                 UserId = request.UserId,
                 CampaignId = request.CampaignId,
                 Content = request.Content,
+                Rating = request.Rating
             };
             var addComment =  await _campaignRepository.AddCommentAsync(campaignCommentDto);
             return addComment;

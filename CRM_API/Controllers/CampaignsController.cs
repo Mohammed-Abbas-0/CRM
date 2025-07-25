@@ -18,9 +18,7 @@ namespace CRM_API.Controllers
             _mediator = mediator;
         }
 
-        //[HttpPost("createcampaign")]
-        //public async Task<IActionResult> CreateCampaign([FromBody] CreateCampaignCommand createCampaign)
-        //{
+        
         [HttpPost("createcampaign")]
         public async Task<IActionResult> CreateCampaign([FromForm] CreateCampaignCommand createCampaign)
         { 
@@ -83,6 +81,32 @@ namespace CRM_API.Controllers
             var response = await _mediator.Send(campaignCommand);
             return Ok(response);
         }
+
+        #region Get All Comments
+
+        [HttpGet("getallcomments")]
+        public async Task<IActionResult> GetAllCampaignComments([FromQuery] int CampaignId)
+        {
+            GetAllCampaignCommentsCommand getAllCampaignCommentsCommand = new GetAllCampaignCommentsCommand { CampaignId = CampaignId };
+            var response = await _mediator.Send(getAllCampaignCommentsCommand);
+            return Ok(response);
+        }
+
+        #endregion
+
+        #region Add Comment
+
+        [HttpPost("addcomment")]
+        public async Task<IActionResult> AddCampaignComment([FromBody] AddCampaignCommentCommand addCampaignCommentCommand)
+        {
+            if (string.IsNullOrWhiteSpace(addCampaignCommentCommand.Content))
+                return BadRequest("Content is required");
+
+            var response = await _mediator.Send(addCampaignCommentCommand);
+            return Ok(response);
+        }
+
+        #endregion
 
     }
 }

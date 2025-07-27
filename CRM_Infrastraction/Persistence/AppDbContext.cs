@@ -17,11 +17,8 @@ namespace CRM_Infrastraction.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Campaign>().HasQueryFilter(idx => idx.IsDeleted != true);
             base.OnModelCreating(modelBuilder);
-
-           
-
-            
 
         }
 

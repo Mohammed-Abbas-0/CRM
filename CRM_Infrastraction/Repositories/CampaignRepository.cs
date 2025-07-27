@@ -2,6 +2,7 @@
 using CRM_Infrastraction.Persistence;
 using CRM_Interface.Dtos;
 using CRM_Interface.IRepositories;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,13 +12,15 @@ namespace CRM_Infrastraction.Repositories
     {
         private readonly AppDbContext _db;
         private readonly UserManager<User> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         #region CTOR
         
-        public CampaignRepository(AppDbContext db, UserManager<User> _userManage)
+        public CampaignRepository(AppDbContext db, UserManager<User> _userManage, IHttpContextAccessor httpContextAccessor)
         {
             _userManager = _userManage;
             _db = db;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         #endregion
@@ -344,6 +347,79 @@ namespace CRM_Infrastraction.Repositories
 
             return campaignCommentRecords;
 
+        }
+
+        #endregion
+
+        #region Get All Campaign which Created By  Company 
+
+        public async Task<List<CampaignRecord>> GetAllCamaignsByUserId(string UserId)
+        {
+
+            var campaigns = await _db.Campaigns
+                                    .AsNoTracking()
+                                    .Where(idx => idx.EndDate > DateTime.UtcNow && idx.UserId == UserId)
+                                    .OrderByDescending(idx => idx.Id)
+                                    .ToListAsync();
+            if (!campaigns.Any())
+                return new List<CampaignRecord>();
+
+
+
+
+            List<CampaignRecord> campaignRecords = new List<CampaignRecord>();
+            foreach (var campaign in campaigns)
+            {
+                int likesCount = await GetCampaignsLikesAsync(campaign.Id);
+               
+                campaignRecords.Add(new CampaignRecord(
+                    Id: campaign.Id,
+                    Name: campaign.Name,
+                    Description: campaign.Description,
+                    StartDate: campaign.StartDate,
+                    EndDate: campaign.EndDate,
+                    Budget: campaign.Budget,
+                    IsRegistered: false,
+                    LikesCount: likesCount,
+                    IsLiked: false,
+                    ImageUrl: campaign.ImageUrl,
+                    ImageData: campaign.ImageData,
+                    BudgetAfterDiscount: campaign.BudgetAfterDiscount,
+                    RateDiscount: campaign.RateDiscount,
+                    UserId: campaign.UserId??"",
+                    UserName: _userManager.Users.FirstOrDefault(u => u.Id == campaign.UserId)?.FullName ?? "غير معروف"
+                    ));
+             
+            }
+            return campaignRecords;
+        }
+
+        #endregion
+
+        #region Delete Campaign
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var campaign = await _db.Campaigns.FindAsync(id);
+
+            // SoftDelete
+            if (campaign is null)
+                return false;
+            var userId = _httpContextAccessor.HttpContext.User.FindFirst("UID")?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+                throw new UnauthorizedAccessException("User ID not found in token.");
+
+            // Not Owner to Delete Campaign
+            if (userId != campaign.UserId)
+                throw new UnauthorizedAccessException("You are not authorized to delete this campaign.");
+
+            campaign.DeletedAt = DateTime.Now;
+            campaign.DeletedBy = userId;
+
+            campaign.IsDeleted = true;
+
+            return await Save();
         }
 
         #endregion

@@ -14,6 +14,10 @@
         public decimal? RateDiscount { get; set; } // نسبة الخصم
         public decimal? BudgetAfterDiscount { get; set; } // الميزانية بعد الخصم
 
+        // Deleted Section
+        public bool? IsDeleted { get; set; } = false;
+        public DateTime? DeletedAt { get; set; }
+        public string? DeletedBy { get; set; }
 
         // علاقة Many-to-Many مع العملاء
         public ICollection<CampaignCustomer> CampaignCustomers { get; set; }

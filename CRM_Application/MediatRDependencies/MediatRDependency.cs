@@ -1,12 +1,7 @@
 ﻿using CRM_Application.Commands.Handler;
-using CRM_Interface.IRepositories;
+using CRM_Application.Queries.Handler;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CRM_Application.MediatRDependencies
 {
@@ -21,6 +16,8 @@ namespace CRM_Application.MediatRDependencies
             Services.AddMediatR(idx => idx.RegisterServicesFromAssembly(typeof(AddRoleCommandHandler).Assembly));
             Services.AddMediatR(idx => idx.RegisterServicesFromAssembly(typeof(RegisterCampaignCommandHandler).Assembly));
             Services.AddMediatR(idx => idx.RegisterServicesFromAssembly(typeof(UnRegisterCampaignCommandHandler).Assembly));
+            Services.AddMediatR(idx => idx.RegisterServicesFromAssembly(typeof(DeleteCampaignCommandHandler).Assembly));
+            
             
             return Services;
 

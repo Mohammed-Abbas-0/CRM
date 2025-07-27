@@ -13,9 +13,11 @@ namespace CRM_API.Controllers
     {
 
         private readonly IMediator _mediator;
-        public CampaignsController(IMediator mediator)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public CampaignsController(IMediator mediator, IHttpContextAccessor httpContextAccessor)
         {
             _mediator = mediator;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         
@@ -104,6 +106,39 @@ namespace CRM_API.Controllers
 
             var response = await _mediator.Send(addCampaignCommentCommand);
             return Ok(response);
+        }
+
+        #endregion
+
+        #region Delete
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteAsync([FromRoute] int id)
+        {
+            var command = new DeleteCampaignCommand { Id = id };
+            var success = await _mediator.Send(command);
+
+            if (!success)
+                return NotFound(); 
+
+            return NoContent(); 
+        }
+
+        #endregion
+
+        #region Get All Campaign which Created By  Company 
+
+        [HttpGet("getallcampaignsbyuser")]
+        public async Task<IActionResult> GetAllCampaignsByUser()
+        {
+            var userId = _httpContextAccessor?.HttpContext?.User.FindFirst("UID")?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return BadRequest("User ID not found in token.");
+
+            GetAllCampaignsByUserCommand campaignCommand = new GetAllCampaignsByUserCommand { UsertId = userId };
+            var response = await _mediator.Send(campaignCommand);
+            return Ok(response);
+
         }
 
         #endregion

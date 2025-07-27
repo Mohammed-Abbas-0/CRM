@@ -15,6 +15,8 @@ namespace CRM_Interface.IRepositories
         Task<List<CampaignDto>> SearchCampaignAsync(string searchKeyWord);
         Task<List<CampaignCommentRecord>> GetCampaignCommentsAsync(int campaignId);
         Task<bool> AddCommentAsync(CampaignCommentDto commentsDto);
+        Task<bool> DeleteAsync(int id);
+        Task<List<CampaignRecord>> GetAllCamaignsByUserId(string UserId);
         Task<bool> Save();
 
     }
